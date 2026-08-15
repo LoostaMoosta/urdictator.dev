@@ -9,11 +9,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { MODES, type Mode } from "./WarRoomMap";
+import { type Mode } from "./WarRoomMap";
 import { CITIES } from "@/lib/ct/data";
 import { computeGameState, type GameState } from "@/lib/ct/engine";
 
 const ALL_CITIES = CITIES.map((c) => c.id);
+const MODES: Mode[] = [];
 
 interface Ctx {
   state: GameState;
