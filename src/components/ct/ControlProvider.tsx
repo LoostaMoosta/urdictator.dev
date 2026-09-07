@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import { createContext, useContext, useState, useMemo, type ReactNode } from "react";
 import {
   SERVER_HUBS,
@@ -9,10 +11,10 @@ import {
   type AssetType,
   type CyberEvent,
   type ThreatLevel,
-} from "./data";
+} from "../data";
 
 /* Kalkulasi Garis Lengkung Rute Jaringan (Fiber/Satelit) */
-export function routePath(fromX: number, fromY: number, toX: number, toY: number, type: AssetType) {
+function routePath(fromX: number, fromY: number, toX: number, toY: number, type: AssetType) {
   const dx = toX - fromX;
   const dy = toY - fromY;
 
@@ -135,7 +137,9 @@ export const ControlContext = createContext<ControlContextType | null>(null);
 
 export function ControlProvider({ children }: { children: ReactNode }) {
   const [activeEventIds, setActiveEventIds] = useState<string[]>([]);
-  const [revealedHubs, setRevealedHubs] = useState<string[]>(SERVER_HUBS.map((h) => h.id));
+  const [revealedHubs, setRevealedHubs] = useState<string[]>(
+    SERVER_HUBS.map((h: ServerHub) => h.id),
+  );
 
   const state = useMemo(() => computeGameState(activeEventIds), [activeEventIds]);
 
