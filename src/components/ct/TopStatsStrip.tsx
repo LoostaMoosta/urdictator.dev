@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { GameState } from "@/lib/ct/engine";
-import { manpower } from "@/lib/ct/format";
+import type { GameState } from "./ControlProvider";
 
-// (Fungsi Cell dan useCountUp sama seperti aslinya, jadi tidak saya ubah logika core-nya)
 function useCountUp(target: number, decimals: number) {
   const [v, setV] = useState(target);
   const from = useRef(target);
@@ -34,7 +32,6 @@ interface Metric {
   scale?: number;
   signed?: boolean;
   hideDelta?: boolean;
-  manpowerFormat?: boolean; // Tipe data baru untuk angka pasukan
 }
 
 function Cell({ m }: { m: Metric }) {
@@ -52,8 +49,7 @@ function Cell({ m }: { m: Metric }) {
         <p className="eyebrow">{m.label}</p>
         {delta !== 0 && !m.hideDelta && (
           <span className="num text-[10px] font-semibold" style={{ color }}>
-            {delta > 0 ? "▲" : "▼"}{" "}
-            {m.manpowerFormat ? manpower(Math.abs(delta)) : Math.abs(delta).toFixed(m.decimals)}
+            {delta > 0 ? "▲" : "▼"} {Math.abs(delta).toFixed(m.decimals)}
           </span>
         )}
       </div>
@@ -62,7 +58,7 @@ function Cell({ m }: { m: Metric }) {
         style={{ color: bad ? "var(--critical)" : "var(--foreground)" }}
       >
         {sign}
-        {m.manpowerFormat ? manpower(v) : v.toFixed(m.decimals)}
+        {v.toLocaleString()}
         <span className="ml-0.5 text-base text-muted-foreground">{m.suffix}</span>
       </p>
       <div className="mt-2.5 h-0.75 w-full overflow-hidden rounded-full bg-(--surface-2)">
@@ -82,35 +78,34 @@ function Cell({ m }: { m: Metric }) {
 export function TopStatsStrip({ state, baseline }: { state: GameState; baseline: GameState }) {
   const metrics: Metric[] = [
     {
-      label: "TOTAL PASUKAN (MANPOWER)",
-      value: state.kpis.totalManpowerFielded,
-      baseline: baseline.kpis.totalManpowerFielded,
+      label: "TOTAL KOMPUTASI AKTIF",
+      value: state.kpis.activeCompute,
+      baseline: baseline.kpis.activeCompute,
       decimals: 0,
-      suffix: "",
-      target: "Kapasitas Wajib Militer: 5M",
+      suffix: " PFLOPS",
+      target: "Kapasitas Komputasi Global Server",
       good: "up",
-      scale: 5000000,
-      manpowerFormat: true,
+      scale: 5000,
     },
     {
-      label: "KETEGANGAN GLOBAL (TENSION)",
+      label: "KETEGANGAN SIBER (TENSION)",
       value: state.kpis.globalTension,
       baseline: baseline.kpis.globalTension,
       decimals: 1,
       suffix: "%",
-      target: "Ancaman Perang Terbuka > 50%",
+      target: "Risiko Pemutusan Jaringan > 80%",
       good: "down",
       scale: 100,
     },
     {
-      label: "KAPASITAS INDUSTRI CIVIL",
-      value: state.kpis.industrialCapacity,
-      baseline: baseline.kpis.industrialCapacity,
+      label: "TOTAL BANDWIDTH GLOBAL",
+      value: state.kpis.totalBandwidthActive,
+      baseline: baseline.kpis.totalBandwidthActive,
       decimals: 0,
-      suffix: " IC",
-      target: "Produksi pabrik aktif vs hancur",
+      suffix: " Tbps",
+      target: "Lalu Lintas Data Server Publik",
       good: "up",
-      scale: baseline.kpis.industrialCapacity * 1.5,
+      scale: 50000,
     },
   ];
 
