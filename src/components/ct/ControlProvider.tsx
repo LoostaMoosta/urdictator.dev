@@ -1,17 +1,52 @@
 /* eslint-disable react-refresh/only-export-components */
 
 import { createContext, useContext, useState, useMemo, type ReactNode } from "react";
-import {
-  SERVER_HUBS,
-  CYBER_ASSETS,
-  EVENT_LIBRARY,
-  hubById,
-  type ServerHub,
-  type CyberAsset,
-  type AssetType,
-  type CyberEvent,
-  type ThreatLevel,
-} from "../data";
+
+export type AssetType = "zero-day" | "ddos-swarm" | string;
+export type ThreatLevel = "secure" | "scanned" | "breached";
+
+export interface ServerHub {
+  id: string;
+  name: string;
+  code: string;
+  x: number;
+  y: number;
+  computePower: number;
+  bandwidthCap: number;
+}
+
+export interface CyberAsset {
+  id: string;
+  originHubId: string;
+  targetHubId: string;
+  type: AssetType;
+  stance: string;
+  progress: number;
+  stealth: number;
+  payload: number;
+}
+
+export interface CyberEvent {
+  id: string;
+  kind: string;
+  magnitude: number;
+}
+
+export const SERVER_HUBS: ServerHub[] = [];
+export const CYBER_ASSETS: CyberAsset[] = [];
+export const EVENT_LIBRARY: CyberEvent[] = [];
+
+export function hubById(id: string): ServerHub {
+  return SERVER_HUBS.find((hub) => hub.id === id) ?? {
+    id,
+    name: id,
+    code: id,
+    x: 0,
+    y: 0,
+    computePower: 0,
+    bandwidthCap: 0,
+  };
+}
 
 /* Kalkulasi Garis Lengkung Rute Jaringan (Fiber/Satelit) */
 function routePath(fromX: number, fromY: number, toX: number, toY: number, type: AssetType) {
@@ -137,9 +172,7 @@ export const ControlContext = createContext<ControlContextType | null>(null);
 
 export function ControlProvider({ children }: { children: ReactNode }) {
   const [activeEventIds, setActiveEventIds] = useState<string[]>([]);
-  const [revealedHubs, setRevealedHubs] = useState<string[]>(
-    SERVER_HUBS.map((h: ServerHub) => h.id),
-  );
+  const [revealedHubs] = useState<string[]>(SERVER_HUBS.map((h: ServerHub) => h.id));
 
   const state = useMemo(() => computeGameState(activeEventIds), [activeEventIds]);
 
