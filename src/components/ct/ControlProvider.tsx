@@ -37,15 +37,17 @@ export const CYBER_ASSETS: CyberAsset[] = [];
 export const EVENT_LIBRARY: CyberEvent[] = [];
 
 export function hubById(id: string): ServerHub {
-  return SERVER_HUBS.find((hub) => hub.id === id) ?? {
-    id,
-    name: id,
-    code: id,
-    x: 0,
-    y: 0,
-    computePower: 0,
-    bandwidthCap: 0,
-  };
+  return (
+    SERVER_HUBS.find((hub) => hub.id === id) ?? {
+      id,
+      name: id,
+      code: id,
+      x: 0,
+      y: 0,
+      computePower: 0,
+      bandwidthCap: 0,
+    }
+  );
 }
 
 /* Kalkulasi Garis Lengkung Rute Jaringan (Fiber/Satelit) */
